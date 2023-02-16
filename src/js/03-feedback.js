@@ -34,7 +34,7 @@ function setData(data) {
 function getData() {
   const dataJSON = localStorage.getItem(STORAGE_KEY);
 
-  // If data is present in local storage, parse and return it
+  // If form data is present in local storage, parse and return it
   // Otherwise, return empty values
   return dataJSON
     ? JSON.parse(dataJSON)
