@@ -15,38 +15,34 @@ function onFormInput(e) {
 
 function onFormSubmit(e) {
   e.preventDefault();
-  const {
-    email: { value: email },
-    message: { value: message },
-  } = e.target.elements;
-  // Log the form data to the console
-  console.log({
-    email,
-    message,
-  });
+  const submittedData = {};
+  const formData = new FormData(formEl);
+  // Collect and then log the form data to the console
+  for (const [name, value] of formData) {
+    submittedData[name] = value;
+  }
+  console.log(submittedData);
 
   // Clear the form and local storage
   e.target.reset();
   localStorage.removeItem(STORAGE_KEY);
 }
 
-function setData(data) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+function setData(dataObj) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(dataObj));
 }
 
 function getData() {
-  const dataJSON = localStorage.getItem(STORAGE_KEY);
-
   // If form data is present in local storage, parse and return it
-  // Otherwise, return empty values
-  if (dataJSON) {
-    try {
-      return JSON.parse(dataJSON);
-    } catch (e) {
-      console.log('error: ', e);
-      return [];
-    }
-  } else return [];
+  // Otherwise, return empty object
+  const dataJSON = localStorage.getItem(STORAGE_KEY) || '{}';
+
+  try {
+    return JSON.parse(dataJSON);
+  } catch (e) {
+    console.log('error: ', e);
+    return {};
+  }
 }
 
 function initListeners() {
@@ -59,10 +55,12 @@ function init() {
   initListeners();
 
   // Populate the form with saved data from local storage
-  const savedformObject = getData();
-  for (const [key, value] of Object.entries(savedformObject)) {
-    formEl.elements[key].value = value;
-  }
+  const savedFormData = getData();
+  Object.entries(savedFormData).forEach(([key, value]) => {
+    if (formEl.elements[key]) {
+      formEl.elements[key].value = value;
+    }
+  });
 }
 
 // Call the init function to start the app
