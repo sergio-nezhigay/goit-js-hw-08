@@ -15,11 +15,14 @@ function onFormInput(e) {
 
 function onFormSubmit(e) {
   e.preventDefault();
-
+  const {
+    email: { value: email },
+    message: { value: message },
+  } = e.target.elements;
   // Log the form data to the console
   console.log({
-    email: e.target.elements.email.value,
-    message: e.target.elements.message.value,
+    email,
+    message,
   });
 
   // Clear the form and local storage
@@ -36,23 +39,30 @@ function getData() {
 
   // If form data is present in local storage, parse and return it
   // Otherwise, return empty values
-  return dataJSON
-    ? JSON.parse(dataJSON)
-    : {
-        email: '',
-        message: '',
-      };
+  if (dataJSON) {
+    try {
+      return JSON.parse(dataJSON);
+    } catch (e) {
+      console.log('error: ', e);
+      return [];
+    }
+  } else return [];
 }
 
-function init() {
+function initListeners() {
   // Add event listeners to the form elements
   formEl.addEventListener('input', throttle(onFormInput, 500));
   formEl.addEventListener('submit', onFormSubmit);
+}
+
+function init() {
+  initListeners();
 
   // Populate the form with saved data from local storage
-  const { email, message } = getData();
-  formEl.elements.email.value = email;
-  formEl.elements.message.value = message;
+  const savedformObject = getData();
+  for (const [key, value] of Object.entries(savedformObject)) {
+    formEl.elements[key].value = value;
+  }
 }
 
 // Call the init function to start the app

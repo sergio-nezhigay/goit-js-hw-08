@@ -8,14 +8,13 @@ const STORAGE_KEY = 'videoplayer-current-time';
 const iframe = document.querySelector('iframe');
 
 // Functions
-function onTimeUpdate(timeObject) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(timeObject));
+function onTimeUpdate({ seconds }) {
+  localStorage.setItem(STORAGE_KEY, seconds);
 }
 
 function getTimeFromStorage() {
-  return localStorage.getItem(STORAGE_KEY)
-    ? JSON.parse(localStorage.getItem(STORAGE_KEY)).seconds
-    : 0;
+  const seconds = localStorage.getItem(STORAGE_KEY);
+  return seconds || 0;
 }
 
 function init() {
